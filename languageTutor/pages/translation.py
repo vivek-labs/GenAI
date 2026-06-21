@@ -1,10 +1,22 @@
-import openai
-from openai import OpenAI
+import os
+
 import streamlit as st
-client=OpenAI()
+from openai import OpenAI
+
+
+def get_openai_client():
+    api_key = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY"))
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 
 def generate_random_sentence():
     #Use openai to generate a random sentence (You can specify the language or context here)
+    client = get_openai_client()
+    if client is None:
+        st.error("OPENAI_API_KEY is missing. Add it in Streamlit Cloud secrets to enable sentence generation.")
+        return None
+
     completion = client.chat.completions.create (
         model="gpt-3.5-turbo",
         messages=[
@@ -18,6 +30,11 @@ def generate_random_sentence():
 
 def verify_translation(original_sentance, user_translation):
     #Using OpenAI to veriify translation and provide feedback
+    client = get_openai_client()
+    if client is None:
+        st.error("OPENAI_API_KEY is missing. Add it in Streamlit Cloud secrets to enable translation feedback.")
+        return None
+
     completion = client.chat.completions.create(
       model="gpt-3.5-turbo",
       messages=[

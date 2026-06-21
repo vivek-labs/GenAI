@@ -1,8 +1,21 @@
+import os
+
 import streamlit as st
 from openai import OpenAI
-client = OpenAI()
+
+
+def get_openai_client():
+    api_key = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY"))
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 def generate_grammar_exercise():
     #Using OpenAI to generate a grammar exercise
+    client = get_openai_client()
+    if client is None:
+        st.error("OPENAI_API_KEY is missing. Add it in Streamlit Cloud secrets to enable exercises.")
+        return None
+
     completion=client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -17,6 +30,11 @@ def generate_grammar_exercise():
 
 def check_answer(question, user_answer):
     #Using openai to check the user's anser and provide feedback
+    client = get_openai_client()
+    if client is None:
+        st.error("OPENAI_API_KEY is missing. Add it in Streamlit Cloud secrets to enable feedback.")
+        return None
+
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
