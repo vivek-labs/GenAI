@@ -1,10 +1,10 @@
 from src.ingestion.pdf_extractor import PDFExtractor
 
-def test_pdf_extraction_basic():
+def test_pdf_extraction_basic(sample_pdf_path):
 
     extractor = PDFExtractor()
 
-    docs = extractor.extract("/Users/vivekpandey/GenAI/multimodel_rag/data/raw/pdf/PA - Consolidated lecture notes.pdf")
+    docs = extractor.extract(str(sample_pdf_path))
 
     # should return something
     assert isinstance(docs, list)
