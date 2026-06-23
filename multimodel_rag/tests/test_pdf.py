@@ -1,11 +1,13 @@
 from __future__ import annotations
+from pathlib import Path
+
 from src.ingestion.pdf_extractor import PDFExtractor
 from src.models.metadata import DocumentMetadata
 from src.models.document import Document
 
 def main():
     extractor = PDFExtractor()
-    docs = extractor.extract("/Users/vivekpandey/GenAI/multimodel_rag/data/raw/pdf/PA - Consolidated lecture notes.pdf")
+    docs = extractor.extract(str(Path(__file__).resolve().parents[1] / "data" / "raw" / "pdf" / "PA - Consolidated lecture notes.pdf"))
     print("Total pages extracted:", len(docs))
 
     if docs:
