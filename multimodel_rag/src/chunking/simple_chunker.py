@@ -49,7 +49,6 @@ class SimpleChunker:
                 )
 
                 chunks.append(new_chunk)
-
                 start += self.chunk_size - self.overlap
 
         return chunks
