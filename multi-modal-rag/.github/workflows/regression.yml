@@ -1,16 +1,16 @@
-name: Multimodel RAG Regression
+name: Multi-Modal-RAG Regression
 
 on:
   push:
     branches: ["mm_rag"]
     paths:
-      - "multimodel_rag/**"
-      - "multimodel_rag/.github/workflows/regression.yml"
+      - "multi-modal-rag/**"
+      - "multi-modal-rag/.github/workflows/regression.yml"
   pull_request:
     branches: ["mm_rag"]
     paths:
-      - "multimodel_rag/**"
-      - "multimodel_rag/.github/workflows/regression.yml"
+      - "multi-modal-rag/**"
+      - "multi-modal-rag/.github/workflows/regression.yml"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: multimodel_rag
+        working-directory: multi-modal-rag
 
     steps:
       - name: Checkout code
