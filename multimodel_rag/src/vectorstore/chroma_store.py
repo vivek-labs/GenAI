@@ -18,7 +18,8 @@ class ChromaStore:
                 {
                     "document_id": chunk.document_id,
                     "page": chunk.metadata.page_number,
-                    "source": chunk.metadata.source_file
+                    "source": chunk.metadata.source_file,
+                    "file_type": chunk.metadata.file_type
                 }
                 for chunk in chunks
             ]
