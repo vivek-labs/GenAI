@@ -2,9 +2,19 @@ class PromptBuilder:
     @staticmethod
     def build_rag_prompt(query:str, context:str) ->str:
         return f"""
-                you are a helpful assistant.
-                Anser ONLY from the provided context.
-                Context:{context} 
-                Question:{query}
-                """
+You are a helpful assistant.
+
+Use ONLY the information provided in the context below.
+
+If the answer cannot be found in the context, say:
+"I could not find the answer in the provided documents."
+
+Context:
+{context}
+
+Question:
+{query}
+
+Answer:
+"""
     

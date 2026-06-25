@@ -24,10 +24,10 @@ class RAGPipeline:
 
         self.vectorstore.add_chunks(chunks, embeddings)
 
-    def retrieve(self, query: str):
+    def retrieve(self, query: str, top_k:int=5):
 
         query_embedding = self.embedder.embed([query])[0]
-        raw_results = self.vectorstore.search(query_embedding)
+        raw_results = self.vectorstore.search(query_embedding,top_k=top_k)
         retrieval_results=[]
         documents=raw_results["documents"][0]
         metadatas=raw_results["metadatas"][0]
@@ -48,14 +48,39 @@ class RAGPipeline:
                     distance=distance
                 )
             )
+        for result in retrieval_results:
+            print(result.distance)
 
         return retrieval_results
+    
+
+    def _build_context(self,results:List[RetrievalResult]) -> str:
+        context = "\n\n".join(result.text for result in results)
+        return context
+
+        
     def ask(self,query:str) -> str:
         results = self.retrieve(query)
-        context = "\n\n".join(result.text for result in results)
+        context = self._build_context(results)
         prompt = PromptBuilder.build_rag_prompt(
             query=query,
             context=context
         )
+ 
         answer = self.llm.generate(prompt)
-        return answer
+
+        #Add sources of answer
+        sources=[]
+        for result in results:
+            source = (
+                f"{result.metadata.source_file} "
+                f"(Page {result.metadata.page_number})"
+            )
+            if source not in sources:
+                sources.append(source)
+
+        sources_text = "\n".join(f"- {source}" for source in sources)
+        return (f"{answer}\n\n"
+                f"Sources:\n"
+                f"{sources_text}"
+        )
