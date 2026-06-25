@@ -57,3 +57,34 @@ def test_sentence_chunker_processes_all_documents():
     pages = {chunk.metadata.page_number for chunk in chunks}
 
     assert pages == {1, 2}
+
+def test_sentence_chunker_adds_sentence_overlap():
+    document = Document(
+        document_id="doc1",
+        text=(
+            "Sentence one. "
+            "Sentence two. "
+            "Sentence three. "
+            "Sentence four. "
+            "Sentence five."
+        ),
+        metadata=DocumentMetadata(
+            source_file="test.pdf",
+            file_type="pdf",
+            page_number=1
+        )
+    )
+
+    chunker = SentenceChunker(
+        chunk_size=35,
+        overlap_sentences=1
+    )
+
+    chunks = chunker.chunk([document])
+
+    assert len(chunks) > 1
+
+    # Last sentence of first chunk should appear in second chunk
+    first_chunk_last_sentence = chunks[0].text.split(".")[-2].strip()
+
+    assert first_chunk_last_sentence in chunks[1].text

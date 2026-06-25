@@ -1,63 +1,85 @@
 from __future__ import annotations
+
 import uuid
+from typing import List
+
 from src.chunking.base_chunker import BaseChunker
 from src.models.chunk import Chunk
 from src.models.document import Document
-from typing import List 
+
 
 class SentenceChunker(BaseChunker):
     """
-    Sentence-aware chunker.
-
-    Strategy:
-    - Split text into sentences
-    - Accumulate sentences until chunk_size is reached
-    - Neve
+    Sentence-aware chunker with optional sentence overlap.
     """
 
-    def __init__(self, chunk_size: int = 800):
-        self.chunk_size=chunk_size
-    
-    def chunk(self, document: List[Document]) -> List[Chunk]:
-        chunks: List[Chunk] = []
-        current_chunk=""
-        current_size = 0
+    def __init__(self, chunk_size: int = 800, overlap_sentences: int = 2):
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be positive")
 
-        for doc in document:
-            #Simple sentence splitting
-            #Limitation to fix later: 
-            #  1 fails for U.S.A and Mr. Vivek and 3.14 kinda words
-            sentences = doc.text.split(". ")
+        if overlap_sentences < 0:
+            raise ValueError("overlap_sentences cannot be negative")
+
+        self.chunk_size = chunk_size
+        self.overlap_sentences = overlap_sentences
+
+    def chunk(self, documents: List[Document]) -> List[Chunk]:
+        chunks: List[Chunk] = []
+
+        for doc in documents:
+            sentences = self._split_sentences(doc.text)
+
+            current_sentences: List[str] = []
+            current_size = 0
 
             for sentence in sentences:
-                sentence = sentence.strip()
-                if not sentence:
-                    continue
-                #Add a dot (.) back as spplit removed it
-                sentence = sentence + ". "
-                if current_size + len(sentence) <= self.chunk_size:
-                    current_chunk += sentence
-                    current_size += len(sentence)
-                else:
-                    chunks.append(
-                        Chunk(
-                            chunk_id=str(uuid.uuid4()),
-                            document_id=doc.document_id,
-                            text=current_chunk.strip(),
-                            metadata=doc.metadata
-                        )
-                    )
-                    current_chunk = sentence
-                    current_size = len(sentence)
-            # save remaining chunk
-            if current_chunk.strip():
-                chunks.append(
-                    Chunk(
-                        chunk_id=str(uuid.uuid4()),
-                        document_id=doc.document_id,
-                        text=current_chunk.strip(),
-                        metadata=doc.metadata
+                sentence_size = len(sentence)
 
+                if current_size + sentence_size <= self.chunk_size:
+                    current_sentences.append(sentence)
+                    current_size += sentence_size
+                else:
+                    if current_sentences:
+                        chunks.append(
+                            self._create_chunk(
+                                doc=doc,
+                                sentences=current_sentences,
+                            )
+                        )
+
+                    if self.overlap_sentences > 0:
+                        overlap = current_sentences[-self.overlap_sentences:]
+                    else:
+                        overlap = []
+
+                    current_sentences = overlap + [sentence]
+                    current_size = sum(len(s) for s in current_sentences)
+
+            if current_sentences:
+                chunks.append(
+                    self._create_chunk(
+                        doc=doc,
+                        sentences=current_sentences,
                     )
                 )
+
         return chunks
+
+    def _split_sentences(self, text: str) -> List[str]:
+        return [
+            sentence.strip() + "."
+            for sentence in text.split(". ")
+            if sentence.strip()
+        ]
+
+    def _create_chunk(
+        self,
+        doc: Document,
+        sentences: List[str],
+    ) -> Chunk:
+        return Chunk(
+            chunk_id=str(uuid.uuid4()),
+            document_id=doc.document_id,
+            text=" ".join(sentences),
+            metadata=doc.metadata,
+        )
