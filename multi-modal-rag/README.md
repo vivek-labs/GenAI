@@ -43,6 +43,6 @@ python -m pytest -v tests
 
 ## Release notes
 
-Current release: `v0.1.0`
+Current release: `v0.2.0`
 
-This release includes the current PDF-to-answer RAG pipeline, the test suite, and the Chroma-backed local persistence path.
+This release adds the base embedding and vector store abstractions, dependency injection in the RAG pipeline, SentenceChunker support with sentence overlap, retrieval distance filtering, and fixes for chunking and retrieval quality.
