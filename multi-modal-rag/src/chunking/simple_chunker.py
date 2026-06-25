@@ -4,9 +4,10 @@ import uuid
 
 from src.models.document import Document
 from src.models.chunk import Chunk
+from src.chunking.base_chunker import BaseChunker
 
 
-class SimpleChunker:
+class SimpleChunker(BaseChunker):
     """
     Minimal chunker for Phase 1 RAG.
 

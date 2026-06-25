@@ -1,7 +1,8 @@
 from typing import List
 from openai import OpenAI
+from src.embeddings.base_embedding import BaseEmbedding
 
-class OpenAIEmbedding:
+class OpenAIEmbedding(BaseEmbedding):
     def __init__(self, model: str = "text-embedding-3-small"):
         self.client = OpenAI()
         self.model = model

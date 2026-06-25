@@ -1,8 +1,9 @@
 import chromadb
 from typing import List
 from src.models.chunk import Chunk
+from src.vectorstore.base_vectorstore import BaseVectorStore
 
-class ChromaStore:
+class ChromaStore(BaseVectorStore):
     def __init__(self, collection_name: str = "rag_name"):
         self.client = chromadb.PersistentClient(path="data/chroma")
         self.collection = self.client.get_or_create_collection(
