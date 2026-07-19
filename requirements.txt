@@ -3,3 +3,5 @@ openai
 pytest
 pymupdf
 chromadb
+docx
+pathlib
