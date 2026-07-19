@@ -3,10 +3,17 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-
 @pytest.fixture(scope="session")
 def sample_pdf_path() -> Path:
     return Path(__file__).resolve().parents[1] / "data" / "raw" / "pdf" / "PA - Consolidated lecture notes.pdf"
+
+@pytest.fixture(scope="session")
+def sample_basic_docx_path() -> Path:
+    return Path(__file__).resolve().parents[1] / "data" / "raw" / "docx" / "sample-files.com-basic-text.docx"
+
+@pytest.fixture(scope="session")
+def sample_empty_docx_path() -> Path:
+    return Path(__file__).resolve().parents[1] / "data" / "raw" / "docx" / "empty_file.docx"
 
 
 @pytest.fixture
