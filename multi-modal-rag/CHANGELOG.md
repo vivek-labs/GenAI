@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.0
+
+### Added
+- BaseExtractor abstraction
+- ExtractorFactory
+- DOCX document ingestion
+- Multi-format ingestion architecture
+
+### Changed
+- PDFExtractor now implements BaseExtractor
+
 ## v0.2.0 - 2026-06-26
 
 ### Added

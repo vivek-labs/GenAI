@@ -3,9 +3,10 @@ import fitz #PyMuPDF
 from typing import List
 from src.models.document import Document
 from src.models.metadata import DocumentMetadata
+from src.ingestion.base_extractor import BaseExtractor
 
 
-class PDFExtractor:
+class PDFExtractor(BaseExtractor):
     """
     Extracts text from PDF and converts into structured Document objects.
     - One document = one page

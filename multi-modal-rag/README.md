@@ -43,6 +43,13 @@ python -m pytest -v tests
 
 ## Release notes
 
-Current release: `v0.2.0`
+## v0.3.0
 
-This release adds the base embedding and vector store abstractions, dependency injection in the RAG pipeline, SentenceChunker support with sentence overlap, retrieval distance filtering, and fixes for chunking and retrieval quality.
+### Added
+- BaseExtractor abstraction
+- ExtractorFactory
+- DOCX document ingestion
+- Multi-format ingestion architecture
+
+### Changed
+- PDFExtractor now implements BaseExtractor
